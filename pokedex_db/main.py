@@ -1,9 +1,18 @@
 # main.py
+import sys
+
+sys.stdout.reconfigure(encoding="utf-8")
+
 from database import create_db, get_session
 from queries import (
-    campeones_por_region, conteo_pokemon_por_tipo,
-    estadisticas_batallas, pokemon_alto_nivel, promedio_nivel_por_entrenador,
-    region_mas_insignias, shiny_con_apodo,
+    campeones_por_region,
+    consulta_libre,
+    conteo_pokemon_por_tipo,
+    estadisticas_batallas,
+    pokemon_alto_nivel,
+    promedio_nivel_por_entrenador,
+    region_mas_insignias,
+    shiny_con_apodo,
 )
 from seed import poblar
 
@@ -47,6 +56,14 @@ def main() -> None:
     print("\n[Q7] Región con mayor promedio de insignias:")
     region, promedio = region_mas_insignias(session)
     print(f"  • {region} — promedio: {promedio} insignias")
+
+    print("\n[Q8] Ranking de Pokémon por nivel dentro del equipo de cada entrenador:")
+    for row in consulta_libre(session):
+        shiny = " [shiny]" if row["es_shiny"] else ""
+        print(
+            f"  • [{row['ranking_en_equipo']}] {row['entrenador']}"
+            f" — {row['pokemon']}{shiny} (Nv.{row['nivel']})"
+        )
 
     print("\n" + "=" * 60)
     print("  ¡Todas las consultas ejecutadas exitosamente!")

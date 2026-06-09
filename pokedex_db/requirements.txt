@@ -1,3 +1,4 @@
+sqlmodel
 ipython
 jupyterlab
 matplotlib

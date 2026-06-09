@@ -91,3 +91,26 @@ def region_mas_insignias(session: Session) -> tuple[str, float]:
         .limit(1)
     )
     return session.exec(stmt).first()
+
+
+def consulta_libre(session: Session) -> list[dict]:
+    """Retorna el ranking de cada Pokémon dentro del equipo de su entrenador por nivel,
+    usando RANK() OVER (PARTITION BY ...), función de ventana no expresable con select()."""
+    sql = text(
+        """
+        SELECT
+            e.nombre        AS entrenador,
+            p.nombre        AS pokemon,
+            p.nivel         AS nivel,
+            p.es_shiny      AS es_shiny,
+            RANK() OVER (
+                PARTITION BY e.id
+                ORDER BY p.nivel DESC
+            )               AS ranking_en_equipo
+        FROM pokemon p
+        JOIN entrenador e ON p.entrenador_id = e.id
+        ORDER BY e.nombre, ranking_en_equipo
+        """
+    )
+    rows = session.exec(sql).mappings().all()
+    return [dict(row) for row in rows]

@@ -14,7 +14,7 @@ class Region(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     nombre: str = Field(unique=True)
     generacion: int
-    description: Optional[str] = None
+    descripcion: Optional[str] = None
     
     entrenadores: list["Entrenador"] = Relationship(back_populates="region")
   
